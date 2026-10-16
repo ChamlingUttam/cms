@@ -6,3 +6,12 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model Admin {
+  id           String   @id @default(cuid())
+  username     String   @unique @db.VarChar(64)
+  passwordHash String
+  authVersion  Int      @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
