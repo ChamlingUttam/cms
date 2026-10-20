@@ -2,6 +2,7 @@ import type { RequestHandler } from 'express';
 import {
   AdminUsernameConflictError,
   changeAdminCredentials,
+  logoutAdmin as revokeAdminSessions,
   verifyAdminCredentials,
 } from './service';
 
@@ -104,4 +105,23 @@ export const changeAdminFields: RequestHandler = async (req, res) => {
 
 export const getCurrentAdmin: RequestHandler = (req, res) => {
   res.json({ success: true, data: { admin: req.admin } });
+};
+
+export const logoutAdmin: RequestHandler = async (req, res) => {
+  const adminId = req.admin?.id;
+
+  if (!adminId) {
+    res.status(401).json({
+      success: false,
+      message: 'Authentication required.',
+    });
+    return;
+  }
+
+  await revokeAdminSessions(adminId);
+
+  res.json({
+    success: true,
+    message: 'Admin signed out.',
+  });
 };

@@ -54,6 +54,13 @@ export async function verifyAdminCredentials(
   return toAuthResponse(admin);
 }
 
+export async function logoutAdmin(adminId: string) {
+  await prisma.admin.update({
+    where: { id: adminId },
+    data: { authVersion: { increment: 1 } },
+  });
+}
+
 export async function changeAdminCredentials(
   adminId: string,
   credentials: ChangedCredentials,

@@ -5,6 +5,7 @@ import {
   changeAdminFields,
   getCurrentAdmin,
   loginAdmin,
+  logoutAdmin,
 } from './controller';
 
 const router = Router();
@@ -39,5 +40,6 @@ router.patch(
   changeAdminFields,
 );
 router.get('/me', requireAdmin, getCurrentAdmin);
+router.post('/logout', requireAdmin, logoutAdmin);
 
 export default router;

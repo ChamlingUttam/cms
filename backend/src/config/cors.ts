@@ -1,6 +1,6 @@
 import cors from 'cors';
 
-const localFrontendOrigin = 'http://localhost:3000';
+const localFrontendOrigin = 'http://localhost:3001';
 
 function parseFrontendOrigin(value: string, requireHttps: boolean) {
   const configuredValue = value.trim();

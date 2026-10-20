@@ -50,7 +50,7 @@ async function withCorsApp(run: (baseUrl: string) => Promise<void>) {
   }
 }
 
-test('development allows the localhost frontend and denies other origins', async (t) => {
+test('development allows the local frontend and denies other origins', async (t) => {
   setEnvironment(t, {
     NODE_ENV: 'development',
     FRONTEND_URL: undefined,
@@ -60,7 +60,7 @@ test('development allows the localhost frontend and denies other origins', async
     const allowedPreflight = await fetch(`${baseUrl}/api/resource`, {
       method: 'OPTIONS',
       headers: {
-        origin: 'http://localhost:3000',
+        origin: 'http://localhost:3001',
         'access-control-request-method': 'PATCH',
         'access-control-request-headers': 'content-type,authorization',
       },
@@ -68,7 +68,7 @@ test('development allows the localhost frontend and denies other origins', async
     assert.equal(allowedPreflight.status, 204);
     assert.equal(
       allowedPreflight.headers.get('access-control-allow-origin'),
-      'http://localhost:3000',
+      'http://localhost:3001',
     );
     assert.match(
       allowedPreflight.headers.get('access-control-allow-headers') ?? '',
