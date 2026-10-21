@@ -1,12 +1,5 @@
-import { BookOpenText } from 'lucide-react';
-import { SectionPage } from '@/components/admin/_components/section-page';
+import { FaqManager } from '@/components/admin/faq-manager';
 
 export default function AdminFaqsPage() {
-  return (
-    <SectionPage
-      description="Manage the frequently asked questions shown on your website."
-      icon={BookOpenText}
-      title="FAQs"
-    />
-  );
+  return <FaqManager />;
 }

@@ -6,6 +6,7 @@ import { useEffect, useSyncExternalStore } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { ManagementSkeleton } from '@/components/admin/_components/management-skeleton';
 import { useCurrentAdmin } from '@/hooks/use-admin-auth';
 import {
   clearAdminToken,
@@ -106,12 +107,11 @@ export function AdminShell({
           </div>
           {!isReady && (
             <div
-              className="absolute inset-0 z-10 flex min-h-72 flex-col items-center justify-center gap-4 bg-background/90 px-4 text-center"
-              role="status"
+              className="absolute inset-0 z-10 min-h-full bg-background px-4 py-6"
             >
               {adminQuery.isError && !sessionExpired ? (
-                <>
-                  <p className="text-sm text-muted-foreground">
+                <div className="flex min-h-72 flex-col items-center justify-center gap-4 text-center">
+                  <p className="max-w-md text-sm text-muted-foreground">
                     We couldn&apos;t load your admin workspace. Check your connection and try again.
                   </p>
                   <Button
@@ -120,13 +120,9 @@ export function AdminShell({
                   >
                     Try again
                   </Button>
-                </>
+                </div>
               ) : (
-                <p className="text-sm text-muted-foreground">
-                  {sessionExpired
-                    ? 'Your session has expired. Redirecting to sign in…'
-                    : 'Loading your admin workspace…'}
-                </p>
+                <ManagementSkeleton />
               )}
             </div>
           )}
