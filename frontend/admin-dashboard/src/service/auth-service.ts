@@ -2,6 +2,7 @@ import { apiClient } from '@/api/client';
 import { authEndpoints } from '@/api-endpoints/auth';
 import type {
   Admin,
+  AdminCredentialUpdate,
   ApiResponse,
   LoginCredentials,
   LoginResponse,
@@ -33,6 +34,19 @@ export async function getCurrentAdmin(): Promise<Admin> {
   );
 
   return data.data.admin;
+}
+
+export async function updateAdminCredentials(
+  credentials: AdminCredentialUpdate,
+): Promise<LoginResponse> {
+  const { data } = await apiClient.patch<ApiResponse<LoginResponse>>(
+    authEndpoints.changeFields,
+    credentials,
+  );
+
+  window.localStorage.setItem(TOKEN_KEY, data.data.token);
+  notifyAuthChange();
+  return data.data;
 }
 
 export async function logoutAdmin() {

@@ -1,12 +1,5 @@
-import { Settings } from 'lucide-react';
-import { SectionPage } from '@/components/admin/_components/section-page';
+import { SettingsManager } from '@/components/admin/settings-manager';
 
 export default function AdminSettingsPage() {
-  return (
-    <SectionPage
-      description="Manage your administrator account and workspace preferences."
-      icon={Settings}
-      title="Settings"
-    />
-  );
+  return <SettingsManager />;
 }

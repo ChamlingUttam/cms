@@ -8,6 +8,12 @@ export interface LoginCredentials {
   password: string;
 }
 
+export interface AdminCredentialUpdate {
+  currentPassword: string;
+  newUsername?: string;
+  newPassword?: string;
+}
+
 export interface LoginResponse {
   token: string;
   admin: Admin;

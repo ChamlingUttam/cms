@@ -50,7 +50,7 @@ export const changeAdminFields: RequestHandler = async (req, res) => {
         newUsername.trim().length === 0 ||
         newUsername.trim().length > 64)) ||
     (hasPassword &&
-      (typeof newPassword !== 'string' || newPassword.length < 8))
+      (typeof newPassword !== 'string' || newPassword.length < 12))
   ) {
     res.status(400).json({
       success: false,

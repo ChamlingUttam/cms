@@ -50,7 +50,7 @@ npm run seed:admin
 ```
 
 The seed command refuses to overwrite an existing admin. Admin login is
-`POST /api/admin/auth/login` with a JSON `username` and `password`; it returns a
+`POST /api/admin/login` with a JSON `username` and `password`; it returns a
 one-hour bearer token:
 
 ```json
@@ -58,11 +58,11 @@ one-hour bearer token:
 ```
 
 Send the token as `Authorization: Bearer <token>`. Protect future admin routes
-with the `requireAdmin` middleware. `GET /api/admin/auth/me` demonstrates the
+with the `requireAdmin` middleware. `GET /api/admin/me` demonstrates the
 protected route. Login is limited to five attempts per IP per 15 minutes using
 the default in-memory rate-limit store.
 
-Update credentials with `PATCH /api/admin/auth/credentials`, authenticated
+Update credentials with `PATCH /api/admin/change-fields`, authenticated
 with the bearer token. Send `currentPassword` and at least one of `newUsername`
 or `newPassword` (new passwords must be at least 12 characters). The endpoint
 returns a replacement token and invalidates tokens issued before the change:
