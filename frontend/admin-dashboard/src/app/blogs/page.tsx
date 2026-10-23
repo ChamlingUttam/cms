@@ -1,12 +1,5 @@
-import { FileText } from 'lucide-react';
-import { SectionPage } from '@/components/admin/_components/section-page';
+import { BlogManager } from '@/components/admin/blogs/blog-manager';
 
 export default function AdminBlogsPage() {
-  return (
-    <SectionPage
-      description="Create and organize the articles published on your website."
-      icon={FileText}
-      title="Blog posts"
-    />
-  );
+  return <BlogManager />;
 }

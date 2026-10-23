@@ -17,14 +17,14 @@ function configureCloudinary() {
     api_secret: apiSecret,
     secure: true,
   });
-   console.log(
-    'Cloudinary using:',
-    cloudName,
-    'key length:',
-    apiKey.length,
-    'secret length:',
-    apiSecret.length,
-  );
+  //  console.log(
+  //   'Cloudinary using:',
+  //   cloudName,
+  //   'key length:',
+  //   apiKey.length,
+  //   'secret length:',
+  //   apiSecret.length,
+  // );
 
 }
 

@@ -1,12 +1,5 @@
-import { MessageSquareQuote } from 'lucide-react';
-import { SectionPage } from '@/components/admin/_components/section-page';
+import { TestimonialManager } from '@/components/admin/testimonials/testimonial-manager';
 
 export default function AdminTestimonialsPage() {
-  return (
-    <SectionPage
-      description="Manage the testimonials displayed on your website."
-      icon={MessageSquareQuote}
-      title="Testimonials"
-    />
-  );
+  return <TestimonialManager />;
 }
