@@ -10,6 +10,7 @@ import { getImageDelivery } from '../src/modules/gallery/delivery';
 import { createGalleryRouters } from '../src/modules/gallery/routerFactory';
 import {
   createGalleryService,
+  type GalleryDateRange,
   type GalleryImageRecord,
   type GalleryImageUpload,
   type GalleryRepository,
@@ -64,7 +65,7 @@ function createFixture(
   let maximumActiveUploads = 0;
 
   const repository: GalleryRepository = {
-    async findMany({ skip, take }) {
+    async findMany({ skip, take, dateRange }) {
       listQueries.push({ skip, take });
 
       if (options.failList) {
@@ -76,10 +77,14 @@ function createFixture(
           second.createdAt.getTime() - first.createdAt.getTime() ||
           second.id.localeCompare(first.id),
       );
-      return ordered.slice(skip, skip + take);
+      return ordered
+        .filter((record) => isWithinRange(record, dateRange))
+        .slice(skip, skip + take);
     },
-    async count() {
-      return records.size;
+    async count(dateRange) {
+      return [...records.values()].filter((record) =>
+        isWithinRange(record, dateRange),
+      ).length;
     },
     async findById(id) {
       return records.get(id) ?? null;
@@ -187,6 +192,16 @@ function createFixture(
     listQueries,
     getMaximumActiveUploads: () => maximumActiveUploads,
   };
+}
+
+function isWithinRange(
+  record: GalleryImageRecord,
+  dateRange?: GalleryDateRange,
+) {
+  return (
+    (!dateRange?.from || record.createdAt >= dateRange.from) &&
+    (!dateRange?.to || record.createdAt < dateRange.to)
+  );
 }
 
 async function withServer(
@@ -321,6 +336,59 @@ test('pagination accepts page and maximum limit and rejects invalid values', asy
       'limit=51',
       'limit=abc',
       'page=9007199254740991&limit=50',
+    ]) {
+      const response = await fetch(`${baseUrl}/api/v1/gallery?${query}`);
+      assert.equal(response.status, 400, query);
+    }
+  });
+});
+
+test('date filters include full Kathmandu calendar days and paginate filtered totals', async () => {
+  const fixture = createFixture({
+    records: [
+      createRecord('before', new Date('2026-09-30T18:14:59.999Z')),
+      createRecord('first-day', new Date('2026-09-30T18:15:00.000Z')),
+      createRecord('last-day', new Date('2026-10-23T18:14:59.999Z')),
+      createRecord('after', new Date('2026-10-23T18:15:00.000Z')),
+    ],
+  });
+
+  await withServer(fixture.app, async (baseUrl) => {
+    const response = await fetch(
+      `${baseUrl}/api/v1/gallery?page=2&limit=1&from=2026-10-01&to=2026-10-23`,
+    );
+    const body = (await response.json()) as {
+      data: {
+        images: Array<{ id: string }>;
+        pagination: Record<string, number>;
+      };
+    };
+
+    assert.equal(response.status, 200);
+    assert.deepEqual(
+      body.data.images.map((image) => image.id),
+      ['first-day'],
+    );
+    assert.deepEqual(body.data.pagination, {
+      page: 2,
+      limit: 1,
+      totalItems: 2,
+      totalPages: 2,
+    });
+    assert.deepEqual(fixture.listQueries, [{ skip: 1, take: 1 }]);
+  });
+});
+
+test('date filters reject invalid calendar dates and reversed ranges', async () => {
+  const fixture = createFixture();
+
+  await withServer(fixture.app, async (baseUrl) => {
+    for (const query of [
+      'from=2026-02-30',
+      'to=2026-13-01',
+      'from=not-a-date',
+      'from=2026-10-02&to=2026-10-01',
+      'from=2026-10-01&from=2026-10-02',
     ]) {
       const response = await fetch(`${baseUrl}/api/v1/gallery?${query}`);
       assert.equal(response.status, 400, query);

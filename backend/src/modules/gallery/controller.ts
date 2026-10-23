@@ -4,6 +4,7 @@ import { getImageDelivery } from './delivery';
 import {
   GalleryImageNotFoundError,
   type GalleryImageRecord,
+  type GalleryDateRange,
   type GalleryService,
   type GalleryUploadResult,
 } from './service';
@@ -14,6 +15,7 @@ const jpegSignature = Buffer.from([0xff, 0xd8, 0xff]);
 const pngSignature = Buffer.from([
   0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a,
 ]);
+const kathmanduOffsetMinutes = 5 * 60 + 45;
 
 type UploadedFile = Express.Multer.File;
 
@@ -100,6 +102,70 @@ function sendPaginationError(res: Response) {
   });
 }
 
+function parseCalendarDate(value: unknown) {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+
+  if (!match) {
+    return null;
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(0);
+  date.setUTCHours(0, 0, 0, 0);
+  date.setUTCFullYear(year, month - 1, day);
+
+  if (
+    year < 1 ||
+    date.getUTCFullYear() !== year ||
+    date.getUTCMonth() !== month - 1 ||
+    date.getUTCDate() !== day
+  ) {
+    return null;
+  }
+
+  return date;
+}
+
+function parseDateRange(from: unknown, to: unknown) {
+  if (from === undefined && to === undefined) {
+    return { dateRange: undefined };
+  }
+
+  const fromDate = from === undefined ? undefined : parseCalendarDate(from);
+  const toDate = to === undefined ? undefined : parseCalendarDate(to);
+
+  if ((from !== undefined && !fromDate) || (to !== undefined && !toDate)) {
+    return {
+      error: 'From and to must be valid dates in YYYY-MM-DD format.',
+    };
+  }
+
+  if (fromDate && toDate && fromDate.getTime() > toDate.getTime()) {
+    return { error: 'The from date must be on or before the to date.' };
+  }
+
+  const dateRange: GalleryDateRange = {};
+
+  if (fromDate) {
+    dateRange.from = new Date(
+      fromDate.getTime() - kathmanduOffsetMinutes * 60_000,
+    );
+  }
+
+  if (toDate) {
+    toDate.setUTCDate(toDate.getUTCDate() + 1);
+    dateRange.to = new Date(toDate.getTime() - kathmanduOffsetMinutes * 60_000);
+  }
+
+  return { dateRange };
+}
+
 async function cleanupTemporaryFiles(files: UploadedFile[]) {
   const cleanupResults = await Promise.allSettled(
     files.map((file) => rm(file.path, { force: true })),
@@ -121,18 +187,31 @@ export function createGalleryController(service: GalleryService) {
     const defaultLimit = req.admin ? 20 : 12;
     const pageResult = parsePositiveInteger(req.query.page, 1);
     const limitResult = parsePositiveInteger(req.query.limit, defaultLimit);
+    const dateRangeResult = parseDateRange(req.query.from, req.query.to);
 
     if (
       'error' in pageResult ||
       'error' in limitResult ||
+      'error' in dateRangeResult ||
       limitResult.value > maximumPageSize ||
       (pageResult.value - 1) * limitResult.value > maximumPaginationOffset
     ) {
-      sendPaginationError(res);
+      if ('error' in dateRangeResult) {
+        res.status(400).json({
+          success: false,
+          message: dateRangeResult.error,
+        });
+      } else {
+        sendPaginationError(res);
+      }
       return;
     }
 
-    const result = await service.list(pageResult.value, limitResult.value);
+    const result = await service.list(
+      pageResult.value,
+      limitResult.value,
+      dateRangeResult.dateRange,
+    );
     res.json({
       success: true,
       data: {

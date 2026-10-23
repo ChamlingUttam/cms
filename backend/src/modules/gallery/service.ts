@@ -17,12 +17,18 @@ export type GalleryImageUpload = Omit<
   'id' | 'createdAt' | 'updatedAt'
 >;
 
+export type GalleryDateRange = {
+  from?: Date;
+  to?: Date;
+};
+
 export type GalleryRepository = {
   findMany: (options: {
     skip: number;
     take: number;
+    dateRange?: GalleryDateRange;
   }) => Promise<GalleryImageRecord[]>;
-  count: () => Promise<number>;
+  count: (dateRange?: GalleryDateRange) => Promise<number>;
   findById: (id: string) => Promise<GalleryImageRecord | null>;
   create: (image: GalleryImageUpload) => Promise<GalleryImageRecord>;
   delete: (id: string) => Promise<GalleryImageRecord>;
@@ -54,7 +60,6 @@ export type GalleryUploadResult =
     };
 
 export class GalleryImageNotFoundError extends Error {}
-
 
 export function createGalleryService(
   repository: GalleryRepository,
@@ -108,11 +113,11 @@ export function createGalleryService(
   }
 
   return {
-    async list(page: number, limit: number) {
+    async list(page: number, limit: number, dateRange?: GalleryDateRange) {
       const skip = (page - 1) * limit;
       const [images, totalItems] = await Promise.all([
-        repository.findMany({ skip, take: limit }),
-        repository.count(),
+        repository.findMany({ skip, take: limit, dateRange }),
+        repository.count(dateRange),
       ]);
 
       return {

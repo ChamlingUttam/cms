@@ -1,12 +1,5 @@
-import { FolderOpen } from 'lucide-react';
-import { SectionPage } from '@/components/admin/_components/section-page';
+import { GalleryManager } from '@/components/admin/gallery-manager';
 
 export default function AdminGalleryPage() {
-  return (
-    <SectionPage
-      description="Organize the images in your website gallery."
-      icon={FolderOpen}
-      title="Gallery"
-    />
-  );
+  return <GalleryManager />;
 }
