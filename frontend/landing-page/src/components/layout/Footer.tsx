@@ -3,7 +3,7 @@ import { Logo } from "@/components/layout/Logo";
 import { Container } from "@/components/ui/Container";
 import { navItems } from "@/data/navigation";
 import { siteConfig, socialLinks } from "@/lib/site";
-import CurrentYear from "./CurrentYear";
+import { CopyrightYear } from "./CopyrightYear";
 
 const linkClass = "my-3 block text-[13px] text-[#b6c5cb] hover:text-white";
 
@@ -83,7 +83,7 @@ export function Footer() {
 
         <div className="flex flex-col gap-2.5 border-t border-[#31505e] pt-6 text-[11px] text-[#69848f] sm:flex-row sm:justify-between">
           <span>
-            © <CurrentYear /> {siteConfig.name}
+            © <CopyrightYear /> {siteConfig.name}
           </span>
           <span>Privacy · Accessibility</span>
         </div>
