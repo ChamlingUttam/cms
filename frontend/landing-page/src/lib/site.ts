@@ -22,10 +22,10 @@ export const siteConfig = {
     "Brightwood Academy",
   ],
   contact: {
-    email: "admissions@brightwood.edu",
+    email: "raiayutra@gmail.com",
     phone: "+1 (555) 014-2024",
     phoneHref: "+15550142024",
-    hours: "Monday–Friday, 8:00am–4:30pm",
+    hours: "Monday–Friday, 10:00am–4:30pm",
     address: {
       street: "14 Willow Lane",
       locality: "Brightwood",
