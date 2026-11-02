@@ -1,7 +1,16 @@
 import type { Metadata } from "next";
 import { JsonLd } from "@/components/seo/JsonLd";
+import { CtaBand } from "@/components/sections/CtaBand";
+import { FeatureSplit } from "@/components/sections/FeatureSplit";
 import { Hero } from "@/components/sections/Hero";
 import { Intro } from "@/components/sections/Intro";
+import { LatestPosts } from "@/components/sections/LatestPosts";
+import { PillarGrid } from "@/components/sections/PillarGrid";
+import { Stats } from "@/components/sections/Stats";
+import { Testimonials } from "@/components/sections/Testimonials";
+import { posts } from "@/data/blog";
+import { testimonials } from "@/data/testimonials";
+import { learningHighlights, pillars, stats } from "@/data/home";
 import { images } from "@/data/images";
 import { createMetadata } from "@/lib/metadata";
 import { webPageSchema } from "@/lib/schema";
@@ -38,6 +47,30 @@ export default function HomePage() {
         title="Education that reaches"
         accent="beyond the classroom."
         text="From first questions to bold ideas, our students learn to think deeply, care widely, and act with purpose. It’s an education built for life—not just the next test."
+      />
+      <PillarGrid pillars={pillars} />
+      <FeatureSplit
+        image={images.student}
+        badge={{ value: "18", label: "average class size" }}
+        eyebrow="Learning at Brightwood"
+        title="Small classes."
+        accent="Big possibilities."
+        text="Our teachers know each student—their strengths, their questions, and what makes them light up. That means learning feels personal, purposeful, and full of momentum."
+        highlights={learningHighlights}
+        cta={{ label: "See how we learn", href: "/programs" }}
+      />
+      <Stats stats={stats} />
+      <Testimonials testimonials={testimonials} />
+      <LatestPosts posts={posts.slice(0, 3)} />
+      <CtaBand
+        eyebrow="Come and see"
+        title={
+          <>
+            Your child’s next chapter <em className="block">starts here.</em>
+          </>
+        }
+        text="Step inside Brightwood, meet our teachers, and experience the energy of our community."
+        cta={{ label: "Book a school tour", href: "/contact" }}
       />
     </>
   );
