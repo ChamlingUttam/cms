@@ -40,6 +40,7 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
   cacheComponents: true,
+  partialPrefetching: true,
   images: {
     formats: ["image/avif", "image/webp"],
     remotePatterns: [
