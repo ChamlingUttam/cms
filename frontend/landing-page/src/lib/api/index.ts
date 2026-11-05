@@ -1,0 +1,1 @@
+export { getTestimonials } from "./testimonials";

@@ -9,7 +9,8 @@ import { PillarGrid } from "@/components/sections/PillarGrid";
 import { Stats } from "@/components/sections/Stats";
 import { Testimonials } from "@/components/sections/Testimonials";
 import { posts } from "@/data/blog";
-import { testimonials } from "@/data/testimonials";
+// import { testimonials } from "@/data/testimonials";
+import { getTestimonials } from "@/lib/api/testimonials";
 import { learningHighlights, pillars, stats } from "@/data/home";
 import { images } from "@/data/images";
 import { createMetadata } from "@/lib/metadata";
@@ -22,7 +23,9 @@ export const metadata: Metadata = createMetadata({
   path: "/",
 });
 
-export default function HomePage() {
+export default async function HomePage() {
+  const testimonials = await getTestimonials();
+
   return (
     <>
       <JsonLd

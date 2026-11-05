@@ -88,7 +88,8 @@
 // }
 
 import { absoluteUrl, siteConfig, socialLinks } from "@/lib/site";
-import type { BlogPost, BreadcrumbItem, Faq } from "@/types";
+import type { BlogPost, BreadcrumbItem } from "@/types";
+import { Faq } from "@/types/content";
 
 type JsonLdObject = Record<string, unknown>;
 
