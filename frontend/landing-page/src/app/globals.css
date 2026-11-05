@@ -1,0 +1,146 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Brand tokens: usable as bg-navy, text-gold, border-line, etc. */
+@theme {
+  --font-sans: var(--font-dm-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), Georgia, "Times New Roman", serif;
+
+  --color-ink: #112d3e;
+  --color-cream: #fbfaf6;
+  --color-sand: #f2eee3;
+  --color-line: #deded7;
+
+  --color-navy: #123c4f;
+  --color-navy-deep: #0f3749;
+  --color-navy-darkest: #092b3b;
+  --color-navy-rule: #416170;
+
+  --color-gold: #efb635;
+  --color-gold-dark: #d79c1f;
+  --color-gold-soft: #fae9b9;
+  --color-sage: #7c9d85;
+  --color-coral: #dc745b;
+
+  --breakpoint-xs: 30rem;
+}
+
+/* shadcn/ui semantic tokens, mapped onto the Brightwood palette. */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --radius-sm: max(0px, calc(var(--radius) - 4px));
+  --radius-md: max(0px, calc(var(--radius) - 2px));
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --background: #fbfaf6;
+  --foreground: #112d3e;
+  --card: #ffffff;
+  --card-foreground: #112d3e;
+  --popover: #ffffff;
+  --popover-foreground: #112d3e;
+  --primary: #123c4f;
+  --primary-foreground: #ffffff;
+  --secondary: #efb635;
+  --secondary-foreground: #102f3e;
+  --muted: #f2eee3;
+  --muted-foreground: #60717a;
+  --accent: #fae9b9;
+  --accent-foreground: #153c4d;
+  --destructive: #b3392b;
+  --border: #deded7;
+  --input: #cad0d1;
+  --ring: #d79c1f;
+  /* The design uses square corners. Raise this to round every shadcn component. */
+  --radius: 0px;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2 {
+    font-weight: 600;
+    letter-spacing: -0.04em;
+    line-height: 1.02;
+  }
+
+  em {
+    font-family: var(--font-serif);
+    font-weight: 500;
+  }
+
+  p {
+    color: var(--muted-foreground);
+    line-height: 1.75;
+  }
+
+  a,
+  button {
+    transition: all 0.25s ease;
+  }
+
+  button:not(:disabled) {
+    cursor: pointer;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-dark);
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: var(--color-gold);
+    color: var(--color-navy-deep);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
