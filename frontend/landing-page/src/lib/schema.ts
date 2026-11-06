@@ -1,11 +1,9 @@
 // import { absoluteUrl, siteConfig, socialLinks } from "@/lib/site";
-// import type { BreadcrumbItem } from "@/types";
+// import type { Blog, BreadcrumbItem, ContactInfo, Faq } from "@/types";
 
 // type JsonLdObject = Record<string, unknown>;
 
-// export function schoolSchema(): JsonLdObject {
-//   const { address } = siteConfig.contact;
-
+// export function schoolSchema(contact: ContactInfo): JsonLdObject {
 //   return {
 //     "@context": "https://schema.org",
 //     "@type": "School",
@@ -15,16 +13,19 @@
 //     url: siteConfig.url,
 //     logo: absoluteUrl("/icon"),
 //     image: absoluteUrl("/opengraph-image"),
-//     email: siteConfig.contact.email,
-//     telephone: siteConfig.contact.phone,
+//     ...(contact.email ? { email: contact.email } : {}),
+//     ...(contact.phoneNo ? { telephone: contact.phoneNo } : {}),
 //     foundingDate: String(siteConfig.foundingYear),
-//     address: {
-//       "@type": "PostalAddress",
-//       streetAddress: address.street,
-//       addressLocality: address.locality,
-//       postalCode: address.postalCode,
-//       addressCountry: address.country,
-//     },
+//     // The admin stores the address as a single line.
+//     ...(contact.address
+//       ? {
+//           address: {
+//             "@type": "PostalAddress",
+//             streetAddress: contact.address,
+//             addressCountry: siteConfig.contact.address.country,
+//           },
+//         }
+//       : {}),
 //     sameAs: socialLinks.map((link) => link.href),
 //   };
 // }
@@ -87,14 +88,58 @@
 //   };
 // }
 
+// export function faqSchema(faqs: Faq[]): JsonLdObject {
+//   return {
+//     "@context": "https://schema.org",
+//     "@type": "FAQPage",
+//     mainEntity: faqs.map((faq) => ({
+//       "@type": "Question",
+//       name: faq.question,
+//       acceptedAnswer: { "@type": "Answer", text: faq.answer },
+//     })),
+//   };
+// }
+
+// /** BlogPosting + breadcrumbs for a single blog (Home › Blog › post). */
+// export function postJsonLd(blog: Blog): JsonLdObject[] {
+//   const path = `/blog/${blog.slug}`;
+
+//   return [
+//     {
+//       "@context": "https://schema.org",
+//       "@type": "BlogPosting",
+//       headline: blog.name,
+//       description: blog.shortDescription || blog.longDescription.slice(0, 160),
+//       ...(blog.imageUrl ? { image: blog.imageUrl } : {}),
+//       ...(blog.createdAt ? { datePublished: blog.createdAt } : {}),
+//       ...(blog.updatedAt || blog.createdAt
+//         ? { dateModified: blog.updatedAt || blog.createdAt }
+//         : {}),
+//       // The admin has no author field, so the school is the author.
+//       author: { "@id": absoluteUrl("/#school") },
+//       publisher: { "@id": absoluteUrl("/#school") },
+//       mainEntityOfPage: absoluteUrl(path),
+//     },
+//     breadcrumbSchema([
+//       { name: "Home", path: "/" },
+//       { name: "Blog", path: "/blog" },
+//       { name: blog.name, path },
+//     ]),
+//   ];
+// }
+
+import { splitList } from "@/lib/format";
 import { absoluteUrl, siteConfig, socialLinks } from "@/lib/site";
-import type { BlogPost, BreadcrumbItem } from "@/types";
-import { Faq } from "@/types/content";
+import type { Blog, BreadcrumbItem, ContactInfo, Faq } from "@/types";
 
 type JsonLdObject = Record<string, unknown>;
 
-export function schoolSchema(): JsonLdObject {
-  const { address } = siteConfig.contact;
+/** One value stays a string; several become an array (both are valid schema.org). */
+const oneOrMany = (list: string[]) => (list.length === 1 ? list[0] : list);
+
+export function schoolSchema(contact: ContactInfo): JsonLdObject {
+  const emails = splitList(contact.email);
+  const phones = splitList(contact.phoneNo);
 
   return {
     "@context": "https://schema.org",
@@ -105,16 +150,19 @@ export function schoolSchema(): JsonLdObject {
     url: siteConfig.url,
     logo: absoluteUrl("/icon"),
     image: absoluteUrl("/opengraph-image"),
-    email: siteConfig.contact.email,
-    telephone: siteConfig.contact.phone,
+    ...(emails.length ? { email: oneOrMany(emails) } : {}),
+    ...(phones.length ? { telephone: oneOrMany(phones) } : {}),
     foundingDate: String(siteConfig.foundingYear),
-    address: {
-      "@type": "PostalAddress",
-      streetAddress: address.street,
-      addressLocality: address.locality,
-      postalCode: address.postalCode,
-      addressCountry: address.country,
-    },
+    // The admin stores the address as a single line.
+    ...(contact.address
+      ? {
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: contact.address,
+            addressCountry: siteConfig.contact.address.country,
+          },
+        }
+      : {}),
     sameAs: socialLinks.map((link) => link.href),
   };
 }
@@ -189,27 +237,30 @@ export function faqSchema(faqs: Faq[]): JsonLdObject {
   };
 }
 
-/** BlogPosting + breadcrumbs for a single post (Home › Blog › post). */
-export function postJsonLd(post: BlogPost): JsonLdObject[] {
-  const path = `/blog/${post.slug}`;
+/** BlogPosting + breadcrumbs for a single blog (Home › Blog › post). */
+export function postJsonLd(blog: Blog): JsonLdObject[] {
+  const path = `/blog/${blog.slug}`;
 
   return [
     {
       "@context": "https://schema.org",
       "@type": "BlogPosting",
-      headline: post.title,
-      description: post.excerpt,
-      image: post.image.src,
-      datePublished: post.date,
-      dateModified: post.date,
-      author: { "@type": "Person", name: post.author },
+      headline: blog.name,
+      description: blog.shortDescription || blog.longDescription.slice(0, 160),
+      ...(blog.imageUrl ? { image: blog.imageUrl } : {}),
+      ...(blog.createdAt ? { datePublished: blog.createdAt } : {}),
+      ...(blog.updatedAt || blog.createdAt
+        ? { dateModified: blog.updatedAt || blog.createdAt }
+        : {}),
+      // The admin has no author field, so the school is the author.
+      author: { "@id": absoluteUrl("/#school") },
       publisher: { "@id": absoluteUrl("/#school") },
       mainEntityOfPage: absoluteUrl(path),
     },
     breadcrumbSchema([
       { name: "Home", path: "/" },
       { name: "Blog", path: "/blog" },
-      { name: post.title, path },
+      { name: blog.name, path },
     ]),
   ];
 }

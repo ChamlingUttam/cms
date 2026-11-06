@@ -1,16 +1,21 @@
-// import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 // import { Card, CardContent, CardFooter } from "@/components/ui/card";
 // import { SectionHeading } from "@/components/ui/SectionHeading";
 // import { Section } from "@/components/ui/Section";
 // import { initials } from "@/lib/format";
-// import type { Testimonial } from "@/types";
+// import type { Testimonial } from "@/types/content";
 
-// /** Quote cards from families and students (shadcn Card + Avatar). */
+// /**
+//  * Quote cards from families and students (shadcn Card + Avatar).
+//  * Content comes from the admin dashboard; with none, the section is hidden.
+//  */
 // export function Testimonials({
 //   testimonials,
 // }: {
 //   testimonials: Testimonial[];
 // }) {
+//   if (testimonials.length === 0) return null;
+
 //   return (
 //     <Section
 //       aria-labelledby="testimonials-heading"
@@ -24,24 +29,35 @@
 //         stacked={false}
 //         className="mb-10 md:mb-14"
 //       />
-//       <ul className="grid gap-5 md:grid-cols-3">
+//       <ul className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
 //         {testimonials.map((item) => (
-//           <li key={item.name} className="flex">
+//           <li key={item.id} className="flex">
 //             <Card className="w-full rounded-none shadow-none">
 //               <CardContent className="flex-1">
-//                 <blockquote className="font-serif text-[1.15rem] leading-[1.6] text-[#113b4d] italic">
-//                   “{item.quote}”
+//                 <blockquote className="font-serif text-[1.15rem] leading-[1.6] whitespace-pre-line text-[#113b4d] italic">
+//                   “{item.description}”
 //                 </blockquote>
 //               </CardContent>
 //               <CardFooter className="gap-3">
 //                 <Avatar className="size-11">
+//                   {item.imageUrl && (
+//                     <AvatarImage
+//                       src={item.imageUrl}
+//                       srcSet={item.srcSet ?? undefined}
+//                       sizes="44px"
+//                       alt=""
+//                       className="object-cover"
+//                     />
+//                   )}
 //                   <AvatarFallback className="bg-gold-soft text-sm font-semibold text-[#153c4d]">
 //                     {initials(item.name)}
 //                   </AvatarFallback>
 //                 </Avatar>
-//                 <div>
+//                 <div className="min-w-0">
 //                   <p className="text-ink text-sm font-semibold">{item.name}</p>
-//                   <p className="text-xs">{item.role}</p>
+//                   {item.profession && (
+//                     <p className="text-xs">{item.profession}</p>
+//                   )}
 //                 </div>
 //               </CardFooter>
 //             </Card>
@@ -57,7 +73,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Section } from "@/components/ui/Section";
 import { initials } from "@/lib/format";
-import type { Testimonial } from "@/types/content";
+import type { Testimonial } from "@/types";
 
 /**
  * Quote cards from families and students (shadcn Card + Avatar).

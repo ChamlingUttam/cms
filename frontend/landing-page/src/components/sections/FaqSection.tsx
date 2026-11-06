@@ -6,7 +6,7 @@
 // } from "@/components/ui/accordion";
 // import { Eyebrow } from "@/components/ui/Eyebrow";
 // import { Section } from "@/components/ui/Section";
-// import type { Faq } from "@/types/types";
+// import type { Faq } from "@/types";
 
 // interface FaqSectionProps {
 //   faqs: Faq[];
@@ -22,6 +22,8 @@
 //   title = "Answers to common",
 //   accent = "questions.",
 // }: FaqSectionProps) {
+//   if (faqs.length === 0) return null;
+
 //   return (
 //     <Section
 //       aria-labelledby="faq-heading"
@@ -37,7 +39,7 @@
 //       <Accordion type="single" collapsible className="border-line border-t">
 //         {faqs.map((faq, index) => (
 //           <AccordionItem
-//             key={faq.question}
+//             key={faq.id}
 //             value={`faq-${index}`}
 //             className="border-line"
 //           >
@@ -62,7 +64,7 @@ import {
 } from "@/components/ui/accordion";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Section } from "@/components/ui/Section";
-import type { Faq } from "@/types/content";
+import type { Faq } from "@/types";
 
 interface FaqSectionProps {
   faqs: Faq[];
@@ -78,6 +80,8 @@ export function FaqSection({
   title = "Answers to common",
   accent = "questions.",
 }: FaqSectionProps) {
+  if (faqs.length === 0) return null;
+
   return (
     <Section
       aria-labelledby="faq-heading"
