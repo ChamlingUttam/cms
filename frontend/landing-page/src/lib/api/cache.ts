@@ -8,4 +8,4 @@
  *
  * Successful requests use `cacheLife("minutes")`.
  */
-export const failedLife = { stale: 30, revalidate: 5, expire: 300 };
+export const failedLife = { stale: 300, revalidate: 5, expire: 300 };
