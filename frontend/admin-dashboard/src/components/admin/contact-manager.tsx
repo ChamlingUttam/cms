@@ -1,21 +1,21 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { isAxiosError } from 'axios';
-import { toast } from 'sonner';
-import { ManagementLoadError } from '@/components/admin/_components/management-load-error';
-import { ManagementPageHeader } from '@/components/admin/_components/management-page-header';
-import { ManagementSkeleton } from '@/components/admin/_components/management-skeleton';
-import { ContactFormSection } from '@/components/admin/contacts/contact-form-section';
-import { ContactList } from '@/components/admin/contacts/contact-list';
+import { useState } from "react";
+import { isAxiosError } from "axios";
+import { toast } from "sonner";
+import { ManagementLoadError } from "@/components/admin/_components/management-load-error";
+import { ManagementPageHeader } from "@/components/admin/_components/management-page-header";
+import { ManagementSkeleton } from "@/components/admin/_components/management-skeleton";
+import { ContactFormSection } from "@/components/admin/contacts/contact-form-section";
+import { ContactList } from "@/components/admin/contacts/contact-list";
 import {
   useContactInfo,
   useCreateContactInfo,
   useDeleteContactInfo,
   useUpdateContactInfo,
-} from '@/hooks/use-content';
-import { getApiErrorMessage } from '@/lib/api-error';
-import type { ContactInput } from '@/types/content';
+} from "@/hooks/use-content";
+import { getApiErrorMessage } from "@/lib/api-error";
+import type { ContactInput } from "@/types/content";
 
 export function ContactManager() {
   const contactQuery = useContactInfo();
@@ -24,7 +24,8 @@ export function ContactManager() {
   const deleteMutation = useDeleteContactInfo();
   const [editing, setEditing] = useState(false);
   const isMissingContact =
-    isAxiosError(contactQuery.error) && contactQuery.error.response?.status === 404;
+    isAxiosError(contactQuery.error) &&
+    contactQuery.error.response?.status === 404;
 
   if (contactQuery.isPending) {
     return <ManagementSkeleton />;
@@ -45,10 +46,12 @@ export function ContactManager() {
   async function handleCreate(input: ContactInput) {
     try {
       await createMutation.mutateAsync(input);
-      toast.success('Contact information created.');
+      toast.success("Contact information created.");
       return true;
     } catch (error) {
-      toast.error(getApiErrorMessage(error, 'Could not create contact information.'));
+      toast.error(
+        getApiErrorMessage(error, "Could not create contact information.")
+      );
       return false;
     }
   }
@@ -57,25 +60,29 @@ export function ContactManager() {
     try {
       await updateMutation.mutateAsync(input);
       setEditing(false);
-      toast.success('Contact information updated.');
+      toast.success("Contact information updated.");
       return true;
     } catch (error) {
-      toast.error(getApiErrorMessage(error, 'Could not update contact information.'));
+      toast.error(
+        getApiErrorMessage(error, "Could not update contact information.")
+      );
       return false;
     }
   }
 
   async function handleDelete() {
-    if (!window.confirm('Delete the public contact information?')) {
+    if (!window.confirm("Delete the public contact information?")) {
       return;
     }
 
     try {
       await deleteMutation.mutateAsync();
       setEditing(false);
-      toast.success('Contact information deleted.');
+      toast.success("Contact information deleted.");
     } catch (error) {
-      toast.error(getApiErrorMessage(error, 'Could not delete contact information.'));
+      toast.error(
+        getApiErrorMessage(error, "Could not delete contact information.")
+      );
     }
   }
 
